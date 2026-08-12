@@ -1029,5 +1029,5 @@
   <include name="snippets/remove.xml" />
   <include name="snippets/avium.xml" />
   <include name="snippets/lineage.xml" />
-  <include name="snippets/taaen.xml" />
+
 </manifest>

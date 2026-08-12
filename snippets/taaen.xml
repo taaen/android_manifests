@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
 
-  <!-- 修正 github remote 为绝对路径（因 manifest fork 到 taaen 后 ".." 会指错） -->
-  <remote name="github"
-          fetch="https://github.com"
-          sync-c="true"
-          sync-j="4" />
+  <!-- github remote 由 default.xml 定义，此处不重复定义避免属性冲突 -->
+  <!-- remote name="github" fetch="https://github.com" sync-c="true" sync-j="4" / -->
 
   <!-- taaen 分支仓库 -->
   <remote name="taaen"
@@ -55,5 +52,8 @@
 
   <remove-project path="vendor/lineage" />
   <project path="vendor/lineage" name="android_vendor_lineage" remote="taaen" />
+
+  <remove-project path="frameworks/native" />
+  <project path="frameworks/native" name="android_frameworks_native" remote="taaen" revision="main" />
 
 </manifest>
