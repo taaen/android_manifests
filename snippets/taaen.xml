@@ -10,25 +10,29 @@
           sync-c="true"
           sync-j="4" />
 
-  <!-- 覆盖：有本地修改的仓库 → taaen -->
-  <remove-project path="device/oneplus/xigua" />
+  <!--
+    覆盖：有本地修改的仓库 → taaen
+
+    注意：<remove-project> 只能用于上游 manifest（default.xml / snippets/*）里
+    确实存在的 path，否则 repo 会报 "remove-project element specifies non-existent
+    project" 并中止（2026-08-04 踩过）。以下几类 path 在上游 manifest 中不存在，
+    因此只写 <project>，不加 <remove-project>：
+      device/oneplus/xigua, device/oneplus/sm8550-common, kernel/oneplus/sm8550*,
+      hardware/oplus, vendor/oneplus/xigua
+  -->
+
+  <!-- 上游没有的项目：直接新增 -->
   <project path="device/oneplus/xigua" name="android_device_oneplus_xigua" remote="taaen" revision="16.0" />
-
-  <remove-project path="device/oneplus/sm8550-common" />
   <project path="device/oneplus/sm8550-common" name="android_device_oneplus_sm8550-common" remote="taaen" revision="16.0" />
-
-  <remove-project path="kernel/oneplus/sm8550" />
   <project path="kernel/oneplus/sm8550" name="android_kernel_oneplus_sm8550" remote="taaen" revision="16.0" />
-
-  <remove-project path="kernel/oneplus/sm8550-devicetrees" />
   <project path="kernel/oneplus/sm8550-devicetrees" name="android_kernel_oneplus_sm8550-devicetrees" remote="taaen" revision="16.0" />
-
-  <remove-project path="kernel/oneplus/sm8550-modules" />
   <project path="kernel/oneplus/sm8550-modules" name="android_kernel_oneplus_sm8550-modules" remote="taaen" revision="16.0" />
-
-  <remove-project path="hardware/oplus" />
   <project path="hardware/oplus" name="android_hardware_oplus" remote="taaen" revision="16.0" />
+  <project path="vendor/oneplus/xigua" name="proprietary_vendor_oneplus_xigua" remote="taaen" revision="lineage-21" />
+  <!-- vendor blob 的第二部分，上游仍是 TheMuppets（本机曾手工改成 gh-proxy 加速） -->
+  <project path="vendor/oneplus/sm8550-common" name="TheMuppets/proprietary_vendor_oneplus_sm8550-common" remote="github" revision="lineage-23.2" />
 
+  <!-- 上游存在、需要换成 taaen fork 的项目 -->
   <remove-project path="hardware/qcom-caf/sm8550/display" />
   <project path="hardware/qcom-caf/sm8550/display" name="android_hardware_qcom_display" remote="taaen" />
 
@@ -37,9 +41,6 @@
 
   <remove-project path="build/make" />
   <project path="build/make" name="android_build" remote="taaen" />
-
-  <remove-project path="vendor/oneplus/xigua" />
-  <project path="vendor/oneplus/xigua" name="proprietary_vendor_oneplus_xigua" remote="taaen" revision="lineage-21" />
 
   <remove-project path="bootable/recovery" />
   <project path="bootable/recovery" name="android_bootable_recovery" remote="taaen" />
@@ -55,5 +56,22 @@
 
   <remove-project path="frameworks/native" />
   <project path="frameworks/native" name="android_frameworks_native" remote="taaen" revision="main" />
+
+  <!--
+    frameworks/base 有意不在这里覆盖：
+    那 2 个 Pop-Up View 提交（横屏小窗修复）从未推到远端，且本仓库的完整
+    AOSP 历史约 1.1M 提交 / 7.3 GiB，不适合推送。做法是 repo sync 得到干净的
+    AviumUI frameworks/base 后，手动套用 patch：
+      git -C frameworks/base am patches/frameworks-base/000*.patch
+    patch 见 https://github.com/taaen/xigua-docs
+  -->
+
+  <!--
+    以下路径由 local manifest 提供（本机为 .repo/local_manifests/pixel.xml 等），
+    不在本文件中重复定义，否则会出现 duplicate path 冲突：
+      vendor/pixel/clocks, vendor/pixel/gms, vendor/pixel/gsans,
+      vendor/pixel/sounds, hardware/pixelworks/interfaces
+    repo init 之后需要把 pixel.xml 放回 .repo/local_manifests/ 再 repo sync。
+  -->
 
 </manifest>
